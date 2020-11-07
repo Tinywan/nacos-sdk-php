@@ -1,5 +1,5 @@
 {
-  "name": "tinywan/nacos",
+  "name": "tinywan/nacos-sdk-php",
   "description": "php sdk for nacos",
   "type": "library",
   "license": "Apache License",
