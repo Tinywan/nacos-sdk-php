@@ -9,7 +9,6 @@ use nacos\exception\RequestVerbRequiredException;
 
 /**
  * Class NacosClientInterface
- * @author suxiaolin
  * @package nacos
  */
 interface NacosClientInterface

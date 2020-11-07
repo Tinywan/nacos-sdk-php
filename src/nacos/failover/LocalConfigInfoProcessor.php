@@ -1,8 +1,6 @@
 <?php
 
-
 namespace nacos\failover;
-
 
 use SplFileInfo;
 use nacos\NacosConfig;

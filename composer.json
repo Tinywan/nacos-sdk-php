@@ -22,7 +22,7 @@
   },
   "autoload": {
     "psr-4": {
-      "nacos\\": "./src"
+      "nacos\\": "src"
     }
   },
   "repositories": {
@@ -35,7 +35,5 @@
     "psr-4": {
       "tests\\": "tests/"
     }
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+  }
 }
