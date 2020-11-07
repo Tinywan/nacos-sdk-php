@@ -3,12 +3,11 @@
 namespace nacos;
 
 use nacos\util\LogUtil;
-
 /**
  * Class Nacos
  * @package nacos
  */
-class Nacos
+class Client
 {
     private static $clientClass;
 

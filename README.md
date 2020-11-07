@@ -24,7 +24,7 @@ cron
 ```php
 // nacos.php
 
-Nacos::init(
+\nacos\Client::init(
     "http://127.0.0.1:8848/",
     "dev",
     "redis.php",
@@ -37,7 +37,7 @@ Nacos::init(
 listener
 
 ```php
-Nacos::init(
+\nacos\Client::init(
     "http://127.0.0.1:8848/",
     "dev",
     "LARAVEL",
