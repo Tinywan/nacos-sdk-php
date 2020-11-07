@@ -34,7 +34,6 @@ class NacosClient implements NacosClientInterface
             if (file_exists($snapshotFile)) {
                 $md5 = md5(file_get_contents($snapshotFile));
             }
-            echo ' [x] md5 =  ' . $md5,  "\n";
             $listenerConfigRequest->setContentMD5($md5);
 
             try {
