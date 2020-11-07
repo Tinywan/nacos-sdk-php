@@ -37,11 +37,13 @@ cron
 listener
 
 ```php
+// scheduler.php
 \nacos\Client::init(
     "http://127.0.0.1:8848/",
     "dev",
-    "LARAVEL",
+    "database.php",
     "DEFAULT_GROUP",
     "4b5ca7ac-3e2a-4456-a15f-f04738345699"
 )->listener();
 ```
+> daemon `nohup bin/php path/to/scheduler.php 1>> /dev/null 2>&1`
