@@ -1,15 +1,18 @@
 {
-  "name": "alibaba/nacos",
-  "description": "阿里巴巴nacos配置中心php客户端",
+  "name": "tinywan/nacos",
+  "description": "php sdk for nacos",
   "type": "library",
-  "license": "MIT",
+  "license": "Apache License",
   "authors": [
     {
-      "name": "suxiaolin",
-      "email": "dear.lin@live.com"
+      "name": "Tinywan",
+      "email": "756684177@qq.com"
     }
   ],
   "require": {
+    "php": ">=7.0",
+    "ext-openssl": "*",
+    "ext-curl": "*",
     "guzzlehttp/guzzle": "^6.3",
     "monolog/monolog": "^1.24|^2.0",
     "ext-json": "*"
@@ -19,7 +22,7 @@
   },
   "autoload": {
     "psr-4": {
-      "alibaba\\": "src/alibaba/"
+      "nacos\\": "./src"
     }
   },
   "autoload-dev": {
