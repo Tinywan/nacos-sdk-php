@@ -2,7 +2,7 @@
   "name": "tinywan/nacos-sdk-php",
   "description": "php sdk for nacos",
   "type": "library",
-  "license": "Apache License",
+  "license": "Apache-2.0",
   "authors": [
     {
       "name": "Tinywan",
