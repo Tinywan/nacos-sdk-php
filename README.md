@@ -1,8 +1,6 @@
 # nacos-sdk-php
 
-A PHP implementation of Nacos OpenAPI.
-
-see: https://nacos.io/zh-cn/docs/open-API.html
+A PHP implementation of Nacos OpenAPI. [Open API Guide](https://nacos.io/en-us/docs/open-api.html)
 
 ## Dependencies
 
