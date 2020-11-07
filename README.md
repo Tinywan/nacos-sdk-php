@@ -4,12 +4,12 @@ A PHP implementation of Nacos OpenAPI.
 
 see: https://nacos.io/zh-cn/docs/open-API.html
 
-### Dependencies
+## Dependencies
 
 * PHP >= 7.0
 * CURL Extension
 
-### Supported Nacos version
+## Nacos version
 
 Nacos 1.3.0 ~ 1.4.0
 
