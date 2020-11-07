@@ -1,14 +1,11 @@
 <?php
 
-
 namespace nacos;
-
 
 use nacos\failover\LocalConfigInfoProcessor;
 
 /**
  * Class DummyNacosClient
- * @author suxiaolin
  * @package nacos
  */
 class DummyNacosClient implements NacosClientInterface

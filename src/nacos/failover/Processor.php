@@ -1,8 +1,6 @@
 <?php
 
-
 namespace nacos\failover;
-
 
 use nacos\NacosConfig;
 use nacos\util\FileUtil;

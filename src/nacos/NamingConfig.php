@@ -4,7 +4,7 @@ namespace nacos;
 
 /**
  * Class NamingConfig
- * @package alibaba\nacos
+ * @package nacos
  */
 class NamingConfig extends NacosConfig
 {

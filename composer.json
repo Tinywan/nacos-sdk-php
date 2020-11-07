@@ -25,6 +25,12 @@
       "nacos\\": "./src"
     }
   },
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://mirrors.aliyun.com/composer/"
+    }
+  },
   "autoload-dev": {
     "psr-4": {
       "tests\\": "tests/"

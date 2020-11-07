@@ -27,10 +27,9 @@ interface NacosClientInterface
      * @param $env
      * @param $dataId
      * @param $group
-     * @param $config
      * @param string $tenant
      */
-    public static function listener($env, $dataId, $group, $config, $tenant = "");
+    public static function listener($env, $dataId, $group, $tenant);
 
     /**
      * @param $dataId

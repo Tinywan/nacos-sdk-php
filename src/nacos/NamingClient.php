@@ -1,8 +1,6 @@
 <?php
 
-
 namespace nacos;
-
 
 use Exception;
 use ReflectionException;
@@ -24,7 +22,6 @@ use nacos\failover\LocalDiscoveryListInfoProcessor;
 
 /**
  * Class NamingClient
- * @author suxiaolin
  * @package alibaba\nacos
  */
 class NamingClient

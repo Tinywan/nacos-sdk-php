@@ -4,7 +4,7 @@
 namespace tests;
 
 
-use alibaba\nacos\NacosConfig;
+use nacos\NacosConfig;
 
 /**
  * Class TestCase

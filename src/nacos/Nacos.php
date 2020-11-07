@@ -1,14 +1,11 @@
 <?php
 
-
 namespace nacos;
-
 
 use nacos\util\LogUtil;
 
 /**
  * Class Nacos
- * @author suxiaolin
  * @package nacos
  */
 class Nacos
@@ -47,5 +44,4 @@ class Nacos
         call_user_func_array([self::$clientClass, "listener"], [NacosConfig::getEnv(), NacosConfig::getDataId(), NacosConfig::getGroup(), NacosConfig::getTenant()]);
         return $this;
     }
-
 }

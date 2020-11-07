@@ -3,7 +3,6 @@
 
 namespace nacos\failover;
 
-
 use SplFileInfo;
 use nacos\NacosConfig;
 use nacos\util\DiscoveryUtil;

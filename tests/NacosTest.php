@@ -1,17 +1,16 @@
 <?php
 
-namespace alibaba\nacos\request\config;
+namespace nacos\request\config;
 
 
-use alibaba\nacos\Nacos;
-use alibaba\nacos\NacosConfig;
+use nacos\Nacos;
+use nacos\NacosConfig;
 use PHPUnit\Framework\TestCase;
-use alibaba\nacos\failover\LocalConfigInfoProcessor;
+use nacos\failover\LocalConfigInfoProcessor;
 
 /**
  * Class NacosTest
- * @author suxiaolin
- * @package alibaba\nacos\request\config
+ * @package nacos\request\config
  */
 class NacosTest extends TestCase
 {

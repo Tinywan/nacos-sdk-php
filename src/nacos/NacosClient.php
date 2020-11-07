@@ -1,8 +1,6 @@
 <?php
 
-
 namespace nacos;
-
 
 use Exception;
 use nacos\util\LogUtil;
@@ -17,13 +15,13 @@ use nacos\listener\config\ListenerConfigRequestErrorListener;
 
 /**
  * Class NacosClient
- * @author suxiaolin
  * @package nacos
  */
 class NacosClient implements NacosClientInterface
 {
-    public static function listener($env, $dataId, $group, $config, $tenant = "")
+    public static function listener($env, $dataId, $group, $tenant = "")
     {
+        $snapshotFile = LocalConfigInfoProcessor::getSnapshotFile($env, $dataId, $group, $tenant);
         $loop = 0;
         do {
             $loop++;
@@ -32,18 +30,19 @@ class NacosClient implements NacosClientInterface
             $listenerConfigRequest->setDataId($dataId);
             $listenerConfigRequest->setGroup($group);
             $listenerConfigRequest->setTenant($tenant);
-            $listenerConfigRequest->setContentMD5(md5($config));
+            $md5 = '';
+            if (file_exists($snapshotFile)) {
+                $md5 = md5(file_get_contents($snapshotFile));
+            }
+            echo ' [x] md5 =  ' . $md5,  "\n";
+            $listenerConfigRequest->setContentMD5($md5);
 
             try {
                 $response = $listenerConfigRequest->doRequest();
                 if ($response->getBody()->getContents()) {
-                    // 配置发生了变化
                     $config = self::get($env, $dataId, $group, $tenant);
-
                     LogUtil::info("found changed config: " . $config);
-
-                    // 保存最新的配置
-                    LocalConfigInfoProcessor::saveSnapshot($env, $dataId, $group, $tenant, $config);
+                    LocalConfigInfoProcessor::saveSnapshot($env, $dataId, $group, $tenant, $config, $snapshotFile);
                 }
             } catch (Exception $e) {
                 LogUtil::error("listener请求异常, e: " . $e->getMessage());
@@ -61,7 +60,7 @@ class NacosClient implements NacosClientInterface
         $getConfigRequest->setDataId($dataId);
         $getConfigRequest->setGroup($group);
         $getConfigRequest->setTenant($tenant);
-        
+
         try {
             $response = $getConfigRequest->doRequest();
             $config = $response->getBody()->getContents();

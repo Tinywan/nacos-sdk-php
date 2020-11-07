@@ -1,15 +1,13 @@
 <?php
 
-
 namespace nacos;
-
 
 use ReflectionException;
 use nacos\model\Instance;
 
 /**
  * Class Naming
- * @package alibaba\nacos
+ * @package nacos
  */
 class Naming
 {
