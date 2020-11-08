@@ -48,6 +48,11 @@ listener
 ```
 > daemon `nohup bin/php path/to/scheduler.php 1>> /dev/null 2>&1`
 
+## Docker
+
+`http://127.0.0.1:8848/` replace `http://192.168.2.108:8848/` 
+> iponfig or ifconfig get `192.168.2.108`
+
 ## Other
 
 ```
