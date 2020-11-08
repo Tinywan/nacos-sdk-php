@@ -4,7 +4,7 @@ A PHP implementation of Nacos OpenAPI. [Open API Guide](https://nacos.io/en-us/d
 
 ## Dependencies
 
-* PHP >= 7.0
+* PHP >= 7.1
 * CURL Extension
 
 ## Nacos version
@@ -47,3 +47,10 @@ listener
 )->listener();
 ```
 > daemon `nohup bin/php path/to/scheduler.php 1>> /dev/null 2>&1`
+
+## Other
+
+```
+psr4 Error: Class 'nacos\Client' not found
+```
+> need `composer dump-autoload`

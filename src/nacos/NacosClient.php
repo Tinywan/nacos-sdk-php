@@ -3,6 +3,8 @@
 namespace nacos;
 
 use Exception;
+use nacos\exception\ConfigException;
+use nacos\exception\InvalidConfigException;
 use nacos\util\LogUtil;
 use nacos\listener\config\Config;
 use nacos\request\config\GetConfigRequest;
@@ -44,7 +46,7 @@ class NacosClient implements NacosClientInterface
                     LocalConfigInfoProcessor::saveSnapshot($env, $dataId, $group, $tenant, $config, $snapshotFile);
                 }
             } catch (Exception $e) {
-                LogUtil::error("listener请求异常, e: " . $e->getMessage());
+                throw new InvalidConfigException('This is Config Invalid '.$e->getMessage());
                 ListenerConfigRequestErrorListener::notify($env, $dataId, $group, $tenant);
                 // 短暂休息会儿
                 usleep(500);
@@ -65,15 +67,15 @@ class NacosClient implements NacosClientInterface
             $config = $response->getBody()->getContents();
             LocalConfigInfoProcessor::saveSnapshot($env, $dataId, $group, $tenant, $config);
         } catch (Exception $e) {
-            LogUtil::error("获取配置异常，开始从本地获取配置, message: " . $e->getMessage());
-            $config = LocalConfigInfoProcessor::getFailover($env, $dataId, $group, $tenant);
-            $config = $config ? $config
-                : LocalConfigInfoProcessor::getSnapshot($env, $dataId, $group, $tenant);
-            $configListenerParameter = Config::of($env, $dataId, $group, $tenant, $config);
-            GetConfigRequestErrorListener::notify($configListenerParameter);
-            if ($configListenerParameter->isChanged()) {
-                $config = $configListenerParameter->getConfig();
-            }
+            throw new InvalidConfigException('This is Config Invalid '.$e->getMessage());
+            // $config = LocalConfigInfoProcessor::getFailover($env, $dataId, $group, $tenant);
+            // $config = $config ? $config
+            //     : LocalConfigInfoProcessor::getSnapshot($env, $dataId, $group, $tenant);
+            // $configListenerParameter = Config::of($env, $dataId, $group, $tenant, $config);
+            // GetConfigRequestErrorListener::notify($configListenerParameter);
+            // if ($configListenerParameter->isChanged()) {
+            //     $config = $configListenerParameter->getConfig();
+            // }
         }
 
         return $config;

@@ -1,0 +1,1 @@
+https://seld.be/notes/psr-4-autoloading-support-in-composer compose
