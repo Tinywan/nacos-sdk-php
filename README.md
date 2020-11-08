@@ -14,7 +14,7 @@ Nacos 1.3.0 ~ 1.4.0
 ## Installation
 
 ```php
-composer require tinywan/nacos
+composer require tinywan/nacos-sdk-php
 ```
 
 ## Getting Started
