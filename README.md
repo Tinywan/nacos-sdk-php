@@ -1,4 +1,4 @@
-# nacos-sdk-php
+# Nacos-sdk-php
 
 A PHP implementation of Nacos OpenAPI. [Open API Guide](https://nacos.io/en-us/docs/open-api.html)
 
@@ -51,7 +51,7 @@ listener
 ## Docker
 
 `http://127.0.0.1:8848/` replace `http://192.168.2.108:8848/` 
-> iponfig or ifconfig get `192.168.2.108`
+> ipconfig or ifconfig get `192.168.2.108`
 
 ## Other
 
