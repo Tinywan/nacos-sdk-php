@@ -41,7 +41,7 @@ class NacosConfig
     /**
      * @var string 快照文件存放目录
      */
-    private static $snapshotPath = "nacos/config";
+    private static $snapshotPath = __DIR__ . "nacos/config";
 
     /**
      * @var int 长轮询等待时间, 默认30秒

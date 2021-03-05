@@ -3,16 +3,13 @@
 namespace nacos;
 
 use Exception;
-use nacos\exception\ConfigException;
 use nacos\exception\InvalidConfigException;
 use nacos\util\LogUtil;
-use nacos\listener\config\Config;
 use nacos\request\config\GetConfigRequest;
 use nacos\failover\LocalConfigInfoProcessor;
 use nacos\request\config\DeleteConfigRequest;
 use nacos\request\config\PublishConfigRequest;
 use nacos\request\config\ListenerConfigRequest;
-use nacos\listener\config\GetConfigRequestErrorListener;
 use nacos\listener\config\ListenerConfigRequestErrorListener;
 
 /**
@@ -21,6 +18,16 @@ use nacos\listener\config\ListenerConfigRequestErrorListener;
  */
 class NacosClient implements NacosClientInterface
 {
+    /**
+     * Undocumented function
+     *
+     * @param string $env
+     * @param string $dataId
+     * @param string $group
+     * @param string $tenant
+     *
+     * @return void
+     */
     public static function listener($env, $dataId, $group, $tenant = "")
     {
         $snapshotFile = LocalConfigInfoProcessor::getSnapshotFile($env, $dataId, $group, $tenant);
@@ -46,7 +53,7 @@ class NacosClient implements NacosClientInterface
                     LocalConfigInfoProcessor::saveSnapshot($env, $dataId, $group, $tenant, $config, $snapshotFile);
                 }
             } catch (Exception $e) {
-                throw new InvalidConfigException('This is Config Invalid '.$e->getMessage());
+                throw new InvalidConfigException('This is Config Invalid ' . $e->getMessage());
                 ListenerConfigRequestErrorListener::notify($env, $dataId, $group, $tenant);
                 // 短暂休息会儿
                 usleep(500);
@@ -55,6 +62,16 @@ class NacosClient implements NacosClientInterface
         } while (true);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param string $env
+     * @param string $dataId
+     * @param string $group
+     * @param string $tenant
+     *
+     * @return mixed
+     */
     public static function get($env, $dataId, $group, $tenant)
     {
         $getConfigRequest = new GetConfigRequest();
@@ -67,7 +84,7 @@ class NacosClient implements NacosClientInterface
             $config = $response->getBody()->getContents();
             LocalConfigInfoProcessor::saveSnapshot($env, $dataId, $group, $tenant, $config);
         } catch (Exception $e) {
-            throw new InvalidConfigException('This is Config Invalid '.$e->getMessage());
+            throw new InvalidConfigException('This is Config Invalid ' . $e->getMessage());
             // $config = LocalConfigInfoProcessor::getFailover($env, $dataId, $group, $tenant);
             // $config = $config ? $config
             //     : LocalConfigInfoProcessor::getSnapshot($env, $dataId, $group, $tenant);
@@ -81,6 +98,16 @@ class NacosClient implements NacosClientInterface
         return $config;
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param string $dataId
+     * @param string $group
+     * @param string $content
+     * @param string $tenant
+     *
+     * @return mixed
+     */
     public static function publish($dataId, $group, $content, $tenant = "")
     {
         $publishConfigRequest = new PublishConfigRequest();
@@ -97,6 +124,15 @@ class NacosClient implements NacosClientInterface
         return $response->getBody()->getContents() == "true";
     }
 
+    /**
+     * del
+     *
+     * @param string $dataId
+     * @param string $group
+     * @param string $tenant
+     *
+     * @return void
+     */
     public static function delete($dataId, $group, $tenant)
     {
         $deleteConfigRequest = new DeleteConfigRequest();

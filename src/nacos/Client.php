@@ -3,6 +3,7 @@
 namespace nacos;
 
 use nacos\util\LogUtil;
+
 /**
  * Class Nacos
  * @package nacos
@@ -12,13 +13,13 @@ class Client
     private static $clientClass;
 
     /**
-     * Undocumented function
+     * init
      *
-     * @param [type] $host
-     * @param [type] $env
-     * @param [type] $dataId
-     * @param [type] $group
-     * @param [type] $tenant
+     * @param string $host
+     * @param string $env
+     * @param string $dataId
+     * @param string $group
+     * @param string $tenant
      *
      * @return void
      */
@@ -38,30 +39,39 @@ class Client
             } else {
                 self::$clientClass = NacosClient::class;
             }
-
             $client = new self();
         }
         return $client;
     }
 
     /**
-     * Undocumented function
+     * run once
      *
      * @return void
      */
     public function runOnce()
     {
-        return call_user_func_array([self::$clientClass, "get"], [NacosConfig::getEnv(), NacosConfig::getDataId(), NacosConfig::getGroup(), NacosConfig::getTenant()]);
+        return call_user_func_array([self::$clientClass, "get"], [
+            NacosConfig::getEnv(),
+            NacosConfig::getDataId(),
+            NacosConfig::getGroup(),
+            NacosConfig::getTenant()
+        ]);
     }
 
     /**
-     * Undocumented function
+     * loop listener
      *
-     * @return void
+     * @return self
      */
     public function listener()
     {
-        call_user_func_array([self::$clientClass, "listener"], [NacosConfig::getEnv(), NacosConfig::getDataId(), NacosConfig::getGroup(), NacosConfig::getTenant()]);
+        call_user_func_array([self::$clientClass, "listener"], [
+            NacosConfig::getEnv(),
+            NacosConfig::getDataId(),
+            NacosConfig::getGroup(),
+            NacosConfig::getTenant()
+        ]);
         return $this;
     }
 }
