@@ -3,3 +3,4 @@
 /vendor
 /nacos
 /tests/nacos/*
+/composer.lock

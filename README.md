@@ -4,7 +4,7 @@ A PHP implementation of Nacos OpenAPI. [Open API Guide](https://nacos.io/en-us/d
 
 ## Dependencies
 
-- PHP >= 7.1
+- PHP >= 7.2.5
 - CURL Extension
 
 ## Nacos version
