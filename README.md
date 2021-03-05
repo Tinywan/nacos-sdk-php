@@ -9,7 +9,7 @@ A PHP implementation of Nacos OpenAPI. [Open API Guide](https://nacos.io/en-us/d
 
 ## Nacos version
 
-Nacos 1.3.0 ~ 1.4.0
+Nacos 1.3.0 ~ 1.4.2
 
 ## Installation
 
@@ -19,11 +19,10 @@ composer require tinywan/nacos-sdk-php
 
 ## Getting Started
 
-cron
+### crontab
 
 ```php
 // nacos.php
-
 \nacos\Client::init(
     "http://127.0.0.1:8848/",
     "dev",
@@ -35,7 +34,7 @@ cron
 
 > cron `* * * * * bin/php path/to/nacos.php`
 
-listener
+### listener
 
 ```php
 // scheduler.php
@@ -50,6 +49,12 @@ listener
 
 > daemon `nohup bin/php path/to/scheduler.php 1>> /dev/null 2>&1`
 
+### modify config directory 
+
+The working directory saved in the configuration file can be modified by the following command
+```
+NacosConfig::setSnapshotPath(__DIR__);
+```
 ## Docker
 
 `http://127.0.0.1:8848/` replace `http://192.168.2.108:8848/`
