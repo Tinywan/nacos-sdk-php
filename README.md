@@ -4,8 +4,8 @@ A PHP implementation of Nacos OpenAPI. [Open API Guide](https://nacos.io/en-us/d
 
 ## Dependencies
 
-* PHP >= 7.1
-* CURL Extension
+- PHP >= 7.1
+- CURL Extension
 
 ## Nacos version
 
@@ -32,6 +32,7 @@ cron
     "4b5ca7ac-3e2a-4456-a15f-f04738345699"
 )->runOnce();
 ```
+
 > cron `* * * * * bin/php path/to/nacos.php`
 
 listener
@@ -46,11 +47,13 @@ listener
     "4b5ca7ac-3e2a-4456-a15f-f04738345699"
 )->listener();
 ```
+
 > daemon `nohup bin/php path/to/scheduler.php 1>> /dev/null 2>&1`
 
 ## Docker
 
-`http://127.0.0.1:8848/` replace `http://192.168.2.108:8848/` 
+`http://127.0.0.1:8848/` replace `http://192.168.2.108:8848/`
+
 > ipconfig or ifconfig get `192.168.2.108`
 
 ## Other
@@ -58,4 +61,5 @@ listener
 ```
 psr4 Error: Class 'nacos\Client' not found
 ```
+
 > need `composer dump-autoload`
