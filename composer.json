@@ -1,13 +1,12 @@
 {
-    "name": "zhwei/nacos-sdk-php",
-    "version": "1.0.1",
+    "name": "Tinywan/nacos-sdk-php",
     "description": "Nacos PHP Client",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "zhwei",
-            "email": "zhwei.yes@gmail.com"
+            "name": "Tinywan",
+            "email": "756684177@qq.com"
         }
     ],
     "require": {

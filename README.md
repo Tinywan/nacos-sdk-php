@@ -11,7 +11,7 @@ see: https://nacos.io/zh-cn/docs/open-API.html
 ## Install
 
 ```bash
-composer require zhwei/nacos-sdk-php
+composer require Tinywan/nacos-sdk-php
 ```
 
 ## Getting Started
