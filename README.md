@@ -26,6 +26,18 @@ $group = 'test-group';
 $value = $client->getConfig($dataId, $group);
 ```
 
+## Docker
+
+`http://127.0.0.1:8848/` replace `http://192.168.2.108:8848/` 
+> ipconfig or ifconfig get `192.168.2.108`
+
+## Other
+
+```
+psr4 Error: Class 'nacos\Client' not found
+```
+> need `composer dump-autoload`
+
 ## API
 
 ### Request Options
