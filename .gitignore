@@ -1,6 +1,2 @@
-/.idea
-/.vscode
 /vendor
-/nacos
-/tests/nacos/*
 /composer.lock

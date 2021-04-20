@@ -1,146 +1,364 @@
 <?php
 
-namespace nacos;
+namespace Nacos;
 
-use Exception;
-use nacos\exception\InvalidConfigException;
-use nacos\util\LogUtil;
-use nacos\request\config\GetConfigRequest;
-use nacos\failover\LocalConfigInfoProcessor;
-use nacos\request\config\DeleteConfigRequest;
-use nacos\request\config\PublishConfigRequest;
-use nacos\request\config\ListenerConfigRequest;
-use nacos\listener\config\ListenerConfigRequestErrorListener;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Response;
+use Nacos\Exceptions\NacosConfigNotFound;
+use Nacos\Exceptions\NacosNamingNotFound;
+use Nacos\Exceptions\NacosRequestException;
+use Nacos\Models\BeatInfo;
+use Nacos\Models\BeatResult;
+use Nacos\Models\Config;
+use Nacos\Models\ServiceInstance;
+use Nacos\Models\ServiceInstanceList;
 
-/**
- * Class NacosClient
- * @package nacos
- */
-class NacosClient implements NacosClientInterface
+class NacosClient
 {
+    const DEFAULT_PORT = 8848;
+    const DEFAULT_TIMEOUT = 3;
+
+    const DEFAULT_GROUP = 'DEFAULT_GROUP';
+
+    const WORD_SEPARATOR = "\x02";
+    const LINE_SEPARATOR = "\x01";
+
     /**
-     * Undocumented function
-     *
-     * @param string $env
-     * @param string $dataId
-     * @param string $group
-     * @param string $tenant
-     *
-     * @return void
+     * @var string
      */
-    public static function listener($env, $dataId, $group, $tenant = "")
+    protected $endpoint;
+
+    /**
+     * @var int
+     */
+    protected $port;
+
+    /**
+     * @var string
+     */
+    protected $namespace;
+
+    protected $timeout = self::DEFAULT_TIMEOUT;
+
+    public function __construct(string $endpoint, int $port)
     {
-        $snapshotFile = LocalConfigInfoProcessor::getSnapshotFile($env, $dataId, $group, $tenant);
-        $loop = 0;
-        do {
-            $loop++;
-
-            $listenerConfigRequest = new ListenerConfigRequest();
-            $listenerConfigRequest->setDataId($dataId);
-            $listenerConfigRequest->setGroup($group);
-            $listenerConfigRequest->setTenant($tenant);
-            $md5 = '';
-            if (file_exists($snapshotFile)) {
-                $md5 = md5(file_get_contents($snapshotFile));
-            }
-            $listenerConfigRequest->setContentMD5($md5);
-
-            try {
-                $response = $listenerConfigRequest->doRequest();
-                if ($response->getBody()->getContents()) {
-                    $config = self::get($env, $dataId, $group, $tenant);
-                    LogUtil::info("found changed config: " . $config);
-                    LocalConfigInfoProcessor::saveSnapshot($env, $dataId, $group, $tenant, $config, $snapshotFile);
-                }
-            } catch (Exception $e) {
-                throw new InvalidConfigException('This is Config Invalid ' . $e->getMessage());
-                ListenerConfigRequestErrorListener::notify($env, $dataId, $group, $tenant);
-                // 短暂休息会儿
-                usleep(500);
-            }
-            LogUtil::info("listener loop count: " . $loop);
-        } while (true);
+        $this->endpoint = $endpoint;
+        $this->port = $port;
     }
 
     /**
-     * Undocumented function
-     *
-     * @param string $env
+     * @param string $namespace
+     * @return static
+     */
+    public function setNamespace(string $namespace)
+    {
+        $this->namespace = $namespace;
+        return $this;
+    }
+
+    /**
+     * @param int $timeout
+     */
+    public function setTimeout(int $timeout)
+    {
+        $this->timeout = $timeout;
+    }
+
+    /**
+     * 获取配置项
      * @param string $dataId
      * @param string $group
-     * @param string $tenant
-     *
-     * @return mixed
+     * @return string
+     * @throws NacosConfigNotFound
      */
-    public static function get($env, $dataId, $group, $tenant)
+    public function getConfig(string $dataId, string $group = self::DEFAULT_GROUP)
     {
-        $getConfigRequest = new GetConfigRequest();
-        $getConfigRequest->setDataId($dataId);
-        $getConfigRequest->setGroup($group);
-        $getConfigRequest->setTenant($tenant);
+        $query = [
+            'dataId' => $dataId,
+            'group' => $group,
+        ];
 
-        try {
-            $response = $getConfigRequest->doRequest();
-            $config = $response->getBody()->getContents();
-            LocalConfigInfoProcessor::saveSnapshot($env, $dataId, $group, $tenant, $config);
-        } catch (Exception $e) {
-            throw new InvalidConfigException('This is Config Invalid ' . $e->getMessage());
-            // $config = LocalConfigInfoProcessor::getFailover($env, $dataId, $group, $tenant);
-            // $config = $config ? $config
-            //     : LocalConfigInfoProcessor::getSnapshot($env, $dataId, $group, $tenant);
-            // $configListenerParameter = Config::of($env, $dataId, $group, $tenant, $config);
-            // GetConfigRequestErrorListener::notify($configListenerParameter);
-            // if ($configListenerParameter->isChanged()) {
-            //     $config = $configListenerParameter->getConfig();
-            // }
+        if ($this->namespace) {
+            $query['tenant'] = $this->namespace;
         }
 
-        return $config;
+        $resp = $this->request('GET', '/nacos/v1/cs/configs', [
+            'http_errors' => false,
+            'query' => $query
+        ]);
+
+        if (404 === $resp->getStatusCode()) {
+            throw new NacosConfigNotFound(
+                "config not found, dataId:{$dataId} group:{$group} tenant:{$this->namespace}",
+                404
+            );
+        }
+
+        return $resp->getBody()->__toString();
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param string $dataId
-     * @param string $group
-     * @param string $content
-     * @param string $tenant
-     *
-     * @return mixed
-     */
-    public static function publish($dataId, $group, $content, $tenant = "")
+    protected function request($method, $uri, $options = [])
     {
-        $publishConfigRequest = new PublishConfigRequest();
-        $publishConfigRequest->setDataId($dataId);
-        $publishConfigRequest->setGroup($group);
-        $publishConfigRequest->setTenant($tenant);
-        $publishConfigRequest->setContent($content);
+        if (!isset($options['timeout'])) {
+            $options['timeout'] = $this->timeout;
+        }
+
+        $client = new Client();
+        $url = "http://{$this->endpoint}:{$this->port}{$uri}";
 
         try {
-            $response = $publishConfigRequest->doRequest();
-        } catch (Exception $e) {
-            return false;
+            $resp = $client->request($method, $url, $options);
+        } catch (RequestException $exception) {
+            throw new NacosRequestException("{$method} {$url} fail", $exception->getCode(), $exception);
         }
-        return $response->getBody()->getContents() == "true";
+
+        return $resp;
     }
 
     /**
-     * del
-     *
+     * 发布配置
      * @param string $dataId
      * @param string $group
-     * @param string $tenant
-     *
-     * @return void
+     * @param $content
+     * @return string
+     * @throws NacosRequestException
      */
-    public static function delete($dataId, $group, $tenant)
+    public function publishConfig(string $dataId, string $group, $content)
     {
-        $deleteConfigRequest = new DeleteConfigRequest();
-        $deleteConfigRequest->setDataId($dataId);
-        $deleteConfigRequest->setGroup($group);
-        $deleteConfigRequest->setTenant($tenant);
+        $formParams = [
+            'dataId' => $dataId,
+            'group' => $group,
+            'content' => $content,
+        ];
 
-        $response = $deleteConfigRequest->doRequest();
-        return $response->getBody()->getContents() == "true";
+        if ($this->namespace) {
+            $formParams['tenant'] = $this->namespace;
+        }
+
+        $resp = $this->request('POST', '/nacos/v1/cs/configs', ['form_params' => $formParams]);
+        $this->assertResponse($resp, 'true', "NacosClient update config fail");
+
+        return true;
+    }
+
+    protected function assertResponse(Response $resp, $expected, $message)
+    {
+        $actual = $resp->getBody()->__toString();
+        if ($expected !== $actual) {
+            throw new NacosRequestException("$message, actual: {$actual}");
+        }
+    }
+
+    /**
+     * 删除配置
+     * @param string $dataId
+     * @param string $group
+     * @return string
+     * @throws NacosRequestException
+     */
+    public function removeConfig(string $dataId, string $group = self::DEFAULT_GROUP)
+    {
+        $query = [
+            'dataId' => $dataId,
+            'group' => $group,
+        ];
+
+        if ($this->namespace) {
+            $query['tenant'] = $this->namespace;
+        }
+
+        $resp = $this->request('DELETE', '/nacos/v1/cs/configs', ['query' => $query]);
+        $this->assertResponse($resp, 'true', "NacosClient delete config fail");
+
+        return true;
+    }
+
+    /**
+     * 监听配置
+     * @param Config[] $configs
+     * @param int $timeout 长轮训等待事件，默认 30 ，单位：秒
+     * @return Config[]
+     */
+    public function listenConfig(array $configs, int $timeout = 30)
+    {
+        $configStringList = [];
+        foreach ($configs as $cache) {
+            $items = [$cache->dataId, $cache->group, $cache->contentMd5];
+            if ($cache->namespace) {
+                $items [] = $cache->namespace;
+            }
+            $configStringList[] = join(self::WORD_SEPARATOR, $items);
+        }
+        $configString = join(self::LINE_SEPARATOR, $configStringList) . self::LINE_SEPARATOR;
+
+        $resp = $this->request('POST', '/nacos/v1/cs/configs/listener', [
+            'timeout' => $timeout + $this->timeout,
+            'headers' => ['Long-Pulling-Timeout' => $timeout * 1000],
+            'form_params' => [
+                'Listening-Configs' => $configString,
+            ],
+        ]);
+
+        $respString = $resp->getBody()->__toString();
+        if (!$respString) {
+            return [];
+        }
+
+        $changed = [];
+        $lines = explode(self::LINE_SEPARATOR, urldecode($respString));
+        foreach ($lines as $line) {
+            $parts = explode(self::WORD_SEPARATOR, $line);
+            $c = new Config();
+            if (count($parts) === 3) {
+                list($c->dataId, $c->group, $c->namespace) = $parts;
+            } elseif (count($parts) === 2) {
+                list($c->dataId, $c->group) = $parts;
+            } else {
+                continue;
+            }
+            $changed[] = $c;
+        }
+        return $changed;
+    }
+
+    /**
+     * 注册一个实例到服务
+     * @param ServiceInstance $instance
+     * @return boolean
+     */
+    public function createInstance(ServiceInstance $instance)
+    {
+        $instance->validate();
+        $resp = $this->request('POST', '/nacos/v1/ns/instance', ['form_params' => $instance->toCreateParams()]);
+        $this->assertResponse($resp, 'ok', "NacosClient create service instance fail");
+
+        return true;
+    }
+
+    /**
+     * 删除服务下的一个实例
+     * @param string $serviceName
+     * @param string $ip
+     * @param int $port
+     * @param string|null $clusterName
+     * @param string|null $namespaceId
+     * @return boolean
+     */
+    public function deleteInstance(
+        string $serviceName,
+        string $ip,
+        int $port,
+        string $clusterName = null,
+        string $namespaceId = null
+    ) {
+        $query = array_filter(compact('serviceName', 'ip', 'port', 'clusterName', 'namespaceId'));
+        $resp = $this->request('DELETE', '/nacos/v1/ns/instance', ['query' => $query]);
+        $this->assertResponse($resp, 'ok', "NacosClient delete service instance fail");
+
+        return true;
+    }
+
+    public function updateInstance(ServiceInstance $instance)
+    {
+        $instance->validate();
+        $resp = $this->request('PUT', '/nacos/v1/ns/instance', ['form_params' => $instance->toUpdateParams()]);
+        $this->assertResponse($resp, 'ok', "NacosClient update service instance fail");
+
+        return true;
+    }
+
+    /**
+     * 查询服务下的实例列表
+     *
+     * @param string $serviceName      服务名
+     * @param string|null $namespaceId 命名空间ID
+     * @param string[] $clusters       集群名称
+     * @param bool $healthyOnly        是否只返回健康实例
+     * @return ServiceInstanceList
+     */
+    public function getInstanceList(
+        string $serviceName,
+        string $namespaceId = null,
+        array $clusters = [],
+        bool $healthyOnly = false
+    ) {
+        $query = array_filter([
+            'serviceName' => $serviceName,
+            'namespaceId' => $namespaceId,
+            'clusters' => join(',', $clusters),
+            'healthyOnly' => $healthyOnly,
+        ]);
+
+        $resp = $this->request('GET', '/nacos/v1/ns/instance/list', [
+            'http_errors' => false,
+            'query' => $query,
+        ]);
+        $data = json_decode($resp->getBody(), JSON_OBJECT_AS_ARRAY);
+
+        if (404 === $resp->getStatusCode()) {
+            throw new NacosNamingNotFound(
+                "service not found: $serviceName",
+                404
+            );
+        }
+
+        return new ServiceInstanceList($data);
+    }
+
+    /**
+     * 查询一个服务下个某个实例详情
+     *
+     * @param string $serviceName      服务名
+     * @param string $ip               实例IP
+     * @param int $port                实例端口
+     * @param string|null $namespaceId 命名空间 id
+     * @param string|null $cluster     集群名称
+     * @param bool $healthyOnly        是否只返回健康实例
+     * @return ServiceInstance
+     */
+    public function getInstance(
+        string $serviceName,
+        string $ip,
+        int $port,
+        string $namespaceId = null,
+        string $cluster = null,
+        bool $healthyOnly = false
+    ) {
+        $query = array_filter(compact(
+            'serviceName',
+            'ip',
+            'port',
+            'namespaceId',
+            'cluster',
+            'healthyOnly'
+        ));
+
+        $resp = $this->request('GET', '/nacos/v1/ns/instance', ['query' => $query]);
+        $data = json_decode($resp->getBody(), JSON_OBJECT_AS_ARRAY);
+        $data['serviceName'] = $data['service'];
+
+        return new ServiceInstance($data);
+    }
+
+    /**
+     * 发送实例心跳
+     * @param string $serviceName
+     * @param BeatInfo $beat
+     * @return BeatResult
+     */
+    public function sendInstanceBeat(string $serviceName, BeatInfo $beat)
+    {
+        $formParams = [
+            'serviceName' => $serviceName,
+            'beat' => json_encode($beat),
+        ];
+
+        $resp = $this->request('PUT', '/nacos/v1/ns/instance/beat', ['form_params' => $formParams]);
+        $array = json_decode($resp->getBody(), JSON_OBJECT_AS_ARRAY);
+
+        $result = new BeatResult();
+        $result->clientBeatInterval = $array['clientBeatInterval'];
+        return $result;
     }
 }
