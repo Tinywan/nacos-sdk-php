@@ -1,5 +1,5 @@
 {
-    "name": "Tinywan/nacos-sdk-php",
+    "name": "tinywan/nacos-sdk-php",
     "description": "Nacos PHP Client",
     "type": "library",
     "license": "MIT",
