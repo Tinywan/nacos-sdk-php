@@ -19,10 +19,10 @@ class Config
     /**
      * @var string
      */
-    public $contentMd5;
+    public $namespace;
 
     /**
      * @var string
      */
-    public $namespace;
+    public $contentMd5;
 }

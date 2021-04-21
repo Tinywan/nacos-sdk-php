@@ -33,6 +33,35 @@ $dataId = 'database.php';
 $group = 'DEFAULT_GROUP';
 $value = $client->getConfig($dataId, $group);
 ```
+## Listener Config
+
+```php
+use Nacos\NacosClient;
+use Nacos\Models\Config;
+
+$dataId = 'database.php';
+$group = 'DEFAULT_GROUP';
+$namespace = 'c78ce19d-82d1-456a-8552-9a0db6c11d01';
+
+$client = new NacosClient('localhost', 8848);
+$client->setNamespace($namespace);
+$client->setTimeout(3);
+$content = $client->getConfig($dataId, $group);
+$contentMd5 = md5($content);
+
+$cache = new Config();
+$cache->dataId = $dataId;
+$cache->group = $group;
+$cache->namespace = $namespace;
+$cache->contentMd5 = $contentMd5;
+$result = $client->listenConfig([$cache]);
+if(!empty($result)) {
+    $updateContent = $client->getConfig($dataId, $group);
+    var_dump($updateContent);
+} else {
+    var_dump('This Is Not Update');
+}
+```
 
 ## API
 ### Request Options
