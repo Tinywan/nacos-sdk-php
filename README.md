@@ -16,8 +16,8 @@ use Nacos\NacosClient;
 
 $client = new NacosClient('localhost', 8848);
 
-$dataId = 'abc';
-$group = 'test-group';
+$dataId = 'database.php';
+$group = 'DEFAULT_GROUP';
 $value = $client->getConfig($dataId, $group);
 ```
 
@@ -85,7 +85,7 @@ $value = $client->getConfig($dataId, $group);
 - sendInstanceBeat
   - string $serviceName
   - BeatInfo $beat
-## PHPunit Test
+## PHPUnit Test
 
 NacosClientTest
 ```

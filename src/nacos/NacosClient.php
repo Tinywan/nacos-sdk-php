@@ -4,7 +4,6 @@ namespace Nacos;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Response;
 use Nacos\Exceptions\NacosConfigNotFound;
 use Nacos\Exceptions\NacosNamingNotFound;
 use Nacos\Exceptions\NacosRequestException;
@@ -75,12 +74,12 @@ class NacosClient
     }
 
     /**
-     * request function
-     *
+     * @desc: request function
      * @param string $method
      * @param string $uri
      * @param array $options
-     * @return \GuzzleHttp\Psr7\Response
+     * @return \Psr\Http\Message\ResponseInterface
+     * @author Tinywan(ShaoBo Wan)
      */
     protected function request(string $method, string $uri, array $options = [])
     {
@@ -135,14 +134,15 @@ class NacosClient
     }
 
     /**
-     * publish Config
+     * @desc: publish Config
      * @param string $dataId
      * @param string $group
-     * @param $content
-     * @return string
-     * @throws NacosRequestException
+     * @param string $content
+     * @return bool|void
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @author Tinywan(ShaoBo Wan)
      */
-    public function publishConfig(string $dataId, string $group, $content)
+    public function publishConfig(string $dataId, string $group, string $content)
     {
         $formParams = [
             'dataId' => $dataId,
@@ -155,26 +155,24 @@ class NacosClient
         }
 
         $resp = $this->request('POST', '/nacos/v1/cs/configs', ['form_params' => $formParams]);
-        $this->assertResponse($resp, 'true', "NacosClient update config fail");
-
-        return true;
+        return $this->assertResponse($resp, 'true', "NacosClient update config fail");
     }
 
     /**
-     * assertResponse function
-     *
-     * @param Response $resp
-     * @param [type] $expected
-     * @param [type] $message
-     *
-     * @return void
+     * @desc: assertResponse function
+     * @param \Psr\Http\Message\ResponseInterface $resp
+     * @param $expected
+     * @param $message
+     * @return bool
+     * @author Tinywan(ShaoBo Wan)
      */
-    protected function assertResponse(Response $resp, $expected, $message)
+    protected function assertResponse(\Psr\Http\Message\ResponseInterface $resp, $expected, $message)
     {
         $actual = $resp->getBody()->__toString();
         if ($expected !== $actual) {
             throw new NacosRequestException("$message, actual: {$actual}");
         }
+        return true;
     }
 
     /**
@@ -197,9 +195,7 @@ class NacosClient
         }
 
         $resp = $this->request('DELETE', '/nacos/v1/cs/configs', ['query' => $query]);
-        $this->assertResponse($resp, 'true', "NacosClient delete config fail");
-
-        return true;
+        return $this->assertResponse($resp, 'true', "NacosClient delete config fail");
     }
 
     /**
@@ -236,16 +232,18 @@ class NacosClient
         $changed = [];
         $lines = explode(self::LINE_SEPARATOR, urldecode($respString));
         foreach ($lines as $line) {
-            $parts = explode(self::WORD_SEPARATOR, $line);
-            $c = new Config();
-            if (count($parts) === 3) {
-                list($c->dataId, $c->group, $c->namespace) = $parts;
-            } elseif (count($parts) === 2) {
-                list($c->dataId, $c->group) = $parts;
-            } else {
-                continue;
+            if(!empty($line)) {
+                $parts = explode(self::WORD_SEPARATOR, $line);
+                $c = new Config();
+                if (count($parts) === 3) {
+                    list($c->dataId, $c->group, $c->namespace) = $parts;
+                } elseif (count($parts) === 2) {
+                    list($c->dataId, $c->group) = $parts;
+                } else {
+                    continue;
+                }
+                $changed[] = $c;
             }
-            $changed[] = $c;
         }
         return $changed;
     }
@@ -259,9 +257,7 @@ class NacosClient
     {
         $instance->validate();
         $resp = $this->request('POST', '/nacos/v1/ns/instance', ['form_params' => $instance->toCreateParams()]);
-        $this->assertResponse($resp, 'ok', "NacosClient create service instance fail");
-
-        return true;
+        return $this->assertResponse($resp, 'ok', "NacosClient create service instance fail");
     }
 
     /**
@@ -282,18 +278,14 @@ class NacosClient
     ) {
         $query = array_filter(compact('serviceName', 'ip', 'port', 'clusterName', 'namespaceId'));
         $resp = $this->request('DELETE', '/nacos/v1/ns/instance', ['query' => $query]);
-        $this->assertResponse($resp, 'ok', "NacosClient delete service instance fail");
-
-        return true;
+        return $this->assertResponse($resp, 'ok', "NacosClient delete service instance fail");
     }
 
     public function updateInstance(ServiceInstance $instance)
     {
         $instance->validate();
         $resp = $this->request('PUT', '/nacos/v1/ns/instance', ['form_params' => $instance->toUpdateParams()]);
-        $this->assertResponse($resp, 'ok', "NacosClient update service instance fail");
-
-        return true;
+        return $this->assertResponse($resp, 'ok', "NacosClient update service instance fail");
     }
 
     /**
@@ -330,7 +322,6 @@ class NacosClient
                 404
             );
         }
-
         return new ServiceInstanceList($data);
     }
 
