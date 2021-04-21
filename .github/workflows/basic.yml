@@ -1,0 +1,21 @@
+name: basic
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v1
+      with:
+        php-version: '7.0'
+        extensions: mbstring, intl #optional, setup extensions
+        ini-values: post_max_size=256M, short_open_tag=On #optional, setup php.ini configuration
+        coverage: xdebug #optional, setup coverage driver
+        tools: php-cs-fixer, phpunit #optional, setup tools globally
