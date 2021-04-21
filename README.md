@@ -27,9 +27,10 @@ $value = $client->getConfig($dataId, $group);
 use Nacos\NacosClient;
 
 $client = new NacosClient('localhost', 8848);
+$client->setNamespace('c78ce19d-82d1-456a-8552-9a0db6c11d01');
+
 $dataId = 'database.php';
 $group = 'DEFAULT_GROUP';
-$value = $client->setNamespace('c78ce19d-82d1-456a-8552-9a0db6c11d01');
 $value = $client->getConfig($dataId, $group);
 ```
 
