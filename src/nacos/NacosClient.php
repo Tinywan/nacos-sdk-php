@@ -39,8 +39,17 @@ class NacosClient
      */
     protected $namespace;
 
+    /**
+     * @var int
+     */
     protected $timeout = self::DEFAULT_TIMEOUT;
 
+    /**
+     * __construct function
+     *
+     * @param string $endpoint
+     * @param int $port
+     */
     public function __construct(string $endpoint, int $port)
     {
         $this->endpoint = $endpoint;
@@ -49,7 +58,7 @@ class NacosClient
 
     /**
      * @param string $namespace
-     * @return static
+     * @return self
      */
     public function setNamespace(string $namespace)
     {
@@ -66,7 +75,34 @@ class NacosClient
     }
 
     /**
-     * 获取配置项
+     * request function
+     *
+     * @param string $method
+     * @param string $uri
+     * @param array $options
+     * @return \GuzzleHttp\Psr7\Response
+     */
+    protected function request(string $method, string $uri, array $options = [])
+    {
+        if (!isset($options['timeout'])) {
+            $options['timeout'] = $this->timeout;
+        }
+
+        $client = new Client();
+        $url = "http://{$this->endpoint}:{$this->port}{$uri}";
+
+        try {
+            $resp = $client->request($method, $url, $options);
+        } catch (RequestException $exception) {
+            throw new NacosRequestException("{$method} {$url} fail", $exception->getCode(), $exception);
+        }
+        return $resp;
+    }
+
+
+    /**
+     * Get Config Option
+     * 
      * @param string $dataId
      * @param string $group
      * @return string
@@ -98,26 +134,8 @@ class NacosClient
         return $resp->getBody()->__toString();
     }
 
-    protected function request($method, $uri, $options = [])
-    {
-        if (!isset($options['timeout'])) {
-            $options['timeout'] = $this->timeout;
-        }
-
-        $client = new Client();
-        $url = "http://{$this->endpoint}:{$this->port}{$uri}";
-
-        try {
-            $resp = $client->request($method, $url, $options);
-        } catch (RequestException $exception) {
-            throw new NacosRequestException("{$method} {$url} fail", $exception->getCode(), $exception);
-        }
-
-        return $resp;
-    }
-
     /**
-     * 发布配置
+     * publish Config
      * @param string $dataId
      * @param string $group
      * @param $content
@@ -142,6 +160,15 @@ class NacosClient
         return true;
     }
 
+    /**
+     * assertResponse function
+     *
+     * @param Response $resp
+     * @param [type] $expected
+     * @param [type] $message
+     *
+     * @return void
+     */
     protected function assertResponse(Response $resp, $expected, $message)
     {
         $actual = $resp->getBody()->__toString();
@@ -151,7 +178,8 @@ class NacosClient
     }
 
     /**
-     * 删除配置
+     * removeConfig
+     * 
      * @param string $dataId
      * @param string $group
      * @return string
@@ -186,7 +214,7 @@ class NacosClient
         foreach ($configs as $cache) {
             $items = [$cache->dataId, $cache->group, $cache->contentMd5];
             if ($cache->namespace) {
-                $items [] = $cache->namespace;
+                $items[] = $cache->namespace;
             }
             $configStringList[] = join(self::WORD_SEPARATOR, $items);
         }
@@ -351,7 +379,7 @@ class NacosClient
     {
         $formParams = [
             'serviceName' => $serviceName,
-            'beat' => json_encode($beat),
+            'beat' => json_encode($beat)
         ];
 
         $resp = $this->request('PUT', '/nacos/v1/ns/instance/beat', ['form_params' => $formParams]);

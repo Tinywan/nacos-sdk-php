@@ -90,3 +90,9 @@ psr4 Error: Class 'nacos\Client' not found
 - sendInstanceBeat
   - string $serviceName
   - BeatInfo $beat
+
+## Other
+
+```
+docker run --rm --interactive --tty -v e:/GitHub/nacos-sdk-php:/app composer:1.10.16 install --ignore-platform-reqs
+```

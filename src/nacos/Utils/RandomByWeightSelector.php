@@ -8,7 +8,6 @@ class RandomByWeightSelector
 {
     /**
      * 权重+随机选择 instance
-     *
      * @param ServiceInstance[] $instances
      * @return ServiceInstance
      * @throws \Exception

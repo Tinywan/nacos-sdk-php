@@ -30,10 +30,8 @@ class PropertiesConfigParser
             list($key, $value) = $kv;
             $key = trim($key);
             $value = static::translateValue($value);
-
             $values[$key] = $value;
         }
-
         return $values;
     }
 

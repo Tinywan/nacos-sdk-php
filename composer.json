@@ -1,6 +1,6 @@
 {
     "name": "tinywan/nacos-sdk-php",
-    "description": "Nacos PHP Client",
+    "description": "PHP SDK For Nacos",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -26,6 +26,12 @@
     "autoload-dev": {
         "psr-4": {
             "Nacos\\Tests\\": "tests"
+        }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
         }
     }
 }
