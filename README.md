@@ -126,6 +126,15 @@ NacosClientTest
 - tests/NacosClientTest.php 指示PHPUnit命令行测试要执行的测试 NacosClientTest 类声明在 tests/NacosClientTest.php
 - http://www.phpunit.cn/getting-started.html
 
+NacosConfig
+```
+./vendor/bin/phpunit --bootstrap src/Nacos/NacosConfig.php tests/NacosConfigTest.php
+```
+
+NacosNaming
+```
+./vendor/bin/phpunit --bootstrap src/Nacos/NacosNaming.php tests/NacosNamingTest.php
+```
 ## Other
 
 Docker Composer

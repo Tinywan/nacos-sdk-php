@@ -9,7 +9,7 @@ class NacosConfigTest extends TestCase
 {
     public function testGetParsedConfigs()
     {
-        $client = new NacosClient('localhost', 8848);
+        $client = new NacosClient('dnmp-nacos', 8848);
 
         $content = "hello=world\nabc=efg";
         $success = $client->publishConfig('config.properties', 'group_name', $content);

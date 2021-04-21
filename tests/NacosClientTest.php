@@ -40,7 +40,7 @@ class NacosClientTest extends TestCase
 
         try {
             $client->getConfig($dataId);
-            self::assertTrue(false, '抛出异常失败，此行不应执行');
+            self::assertTrue(false, 'Failed to throw an exception, this line should not be executed');
         } catch (AssertionFailedError $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -59,11 +59,11 @@ class NacosClientTest extends TestCase
          $contentMd5 = md5($content);
          $pid = pcntl_fork();
          if ($pid === 0) {
-             // 子进程更新配置
+             // fork child process
              sleep(2);
              $success = $client->publishConfig($dataId, $group, 'world=hello' . microtime());
              self::assertTrue($success);
-             exit; // 子进程退出
+             exit; // child process exit
          }
 
          $cache = new Config();

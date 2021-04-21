@@ -14,7 +14,7 @@ class NacosNamingTest extends TestCase
 {
     public function testSelectOneHealthyInstance()
     {
-        $client = new NacosClient('localhost', 8848);
+        $client = new NacosClient('dnmp-nacos', 8848);
 
         $instance = new ServiceInstance();
         $instance->serviceName = 'hello.world';
@@ -37,10 +37,9 @@ class NacosNamingTest extends TestCase
         self::assertInstanceOf(ServiceInstance::class, $instance);
         self::assertSame('hello.world', $instance->serviceName);
 
-        // test NacosNamingNotFound exception
         try {
             $naming->selectOneHealthyInstance('hello.world.not-exists');
-            self::assertTrue(false, '抛出异常失败，此行不应执行');
+            self::assertTrue(false, 'Failed to throw an exception, this line should not be executed');
         } catch (AssertionFailedError $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -55,7 +54,7 @@ class NacosNamingTest extends TestCase
         self::assertTrue($success);
         try {
             $naming->selectOneHealthyInstance('hello.another-world');
-            self::assertTrue(false, '抛出异常失败，此行不应执行');
+            self::assertTrue(false, 'Failed to throw an exception, this line should not be executed');
         } catch (AssertionFailedError $e) {
             throw $e;
         } catch (\Throwable $e) {
