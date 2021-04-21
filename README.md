@@ -1,19 +1,14 @@
 # nacos-sdk-php
 
-A PHP implementation of Nacos OpenAPI.
-
-see: https://nacos.io/zh-cn/docs/open-API.html
-
+A PHP implementation of Nacos OpenAPI. [Open API Guide](https://nacos.io/en-us/docs/open-api.html)
 ## Required
 
 - PHP ^7.0
-
 ## Install
 
-```bash
+```powershell
 composer require Tinywan/nacos-sdk-php
 ```
-
 ## Getting Started
 
 ```php
@@ -25,21 +20,7 @@ $dataId = 'abc';
 $group = 'test-group';
 $value = $client->getConfig($dataId, $group);
 ```
-
-## Docker
-
-`http://127.0.0.1:8848/` replace `http://192.168.2.108:8848/` 
-> ipconfig or ifconfig get `192.168.2.108`
-
-## Other
-
-```
-psr4 Error: Class 'nacos\Client' not found
-```
-> need `composer dump-autoload`
-
 ## API
-
 ### Request Options
 
 - setNamespace
@@ -90,15 +71,9 @@ psr4 Error: Class 'nacos\Client' not found
 - sendInstanceBeat
   - string $serviceName
   - BeatInfo $beat
-
-## Other
-
-```
-docker run --rm --interactive --tty -v e:/GitHub/nacos-sdk-php:/app composer:1.10.16 install --ignore-platform-reqs
-```
-
 ## Test
 
+NacosClientTest
 ```
 ./vendor/bin/phpunit --bootstrap src/Nacos/NacosClient.php tests/NacosClientTest.php
 ```
@@ -106,3 +81,10 @@ docker run --rm --interactive --tty -v e:/GitHub/nacos-sdk-php:/app composer:1.1
 - --bootstrap src/Nacos/NacosClient.php 指示PHPUnit命令行测试在测试之前执行　include src/Nacos/NacosClient.php
 - tests/NacosClientTest.php 指示PHPUnit命令行测试要执行的测试 NacosClientTest 类声明在 tests/NacosClientTest.php
 - http://www.phpunit.cn/getting-started.html
+
+## Other
+
+Docker Composer
+```
+docker run --rm --interactive --tty -v e:/GitHub/nacos-sdk-php:/app composer:1.10.16 install --ignore-platform-reqs
+```
