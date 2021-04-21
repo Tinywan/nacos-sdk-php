@@ -7,7 +7,7 @@ A PHP implementation of Nacos OpenAPI. [Open API Guide](https://nacos.io/en-us/d
 ## Install
 
 ```powershell
-composer require Tinywan/nacos-sdk-php
+composer require tinywan/nacos-sdk-php
 ```
 ## Getting Started
 
@@ -85,7 +85,7 @@ $value = $client->getConfig($dataId, $group);
 - sendInstanceBeat
   - string $serviceName
   - BeatInfo $beat
-## Test
+## PHPunit Test
 
 NacosClientTest
 ```
