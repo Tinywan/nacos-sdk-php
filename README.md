@@ -96,3 +96,13 @@ psr4 Error: Class 'nacos\Client' not found
 ```
 docker run --rm --interactive --tty -v e:/GitHub/nacos-sdk-php:/app composer:1.10.16 install --ignore-platform-reqs
 ```
+
+## Test
+
+```
+./vendor/bin/phpunit --bootstrap src/Nacos/NacosClient.php tests/NacosClientTest.php
+```
+- phpunit 调用命令行测试PHPUnit
+- --bootstrap src/Nacos/NacosClient.php 指示PHPUnit命令行测试在测试之前执行　include src/Nacos/NacosClient.php
+- tests/NacosClientTest.php 指示PHPUnit命令行测试要执行的测试 NacosClientTest 类声明在 tests/NacosClientTest.php
+- http://www.phpunit.cn/getting-started.html

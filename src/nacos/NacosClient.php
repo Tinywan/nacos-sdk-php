@@ -27,7 +27,7 @@ class NacosClient
     /**
      * @var string
      */
-    protected $endpoint;
+    protected $host;
 
     /**
      * @var int
@@ -47,12 +47,12 @@ class NacosClient
     /**
      * __construct function
      *
-     * @param string $endpoint
+     * @param string $host
      * @param int $port
      */
-    public function __construct(string $endpoint, int $port)
+    public function __construct(string $host, int $port)
     {
-        $this->endpoint = $endpoint;
+        $this->host = $host;
         $this->port = $port;
     }
 
@@ -88,13 +88,15 @@ class NacosClient
             $options['timeout'] = $this->timeout;
         }
 
-        $client = new Client();
-        $url = "http://{$this->endpoint}:{$this->port}{$uri}";
+        $client = new Client([
+            'base_uri' => "http://{$this->host}:{$this->port}",
+            'timeout' => $this->timeout
+        ]);
 
         try {
-            $resp = $client->request($method, $url, $options);
+            $resp = $client->request($method, $uri, $options);
         } catch (RequestException $exception) {
-            throw new NacosRequestException("{$method} {$url} fail", $exception->getCode(), $exception);
+            throw new NacosRequestException("{$method} {$uri} fail", $exception->getCode(), $exception);
         }
         return $resp;
     }
@@ -112,7 +114,7 @@ class NacosClient
     {
         $query = [
             'dataId' => $dataId,
-            'group' => $group,
+            'group' => $group
         ];
 
         if ($this->namespace) {
@@ -126,11 +128,9 @@ class NacosClient
 
         if (404 === $resp->getStatusCode()) {
             throw new NacosConfigNotFound(
-                "config not found, dataId:{$dataId} group:{$group} tenant:{$this->namespace}",
-                404
+                "config not found, dataId:{$dataId} group:{$group} tenant:{$this->namespace}",404
             );
         }
-
         return $resp->getBody()->__toString();
     }
 
@@ -147,7 +147,7 @@ class NacosClient
         $formParams = [
             'dataId' => $dataId,
             'group' => $group,
-            'content' => $content,
+            'content' => $content
         ];
 
         if ($this->namespace) {
