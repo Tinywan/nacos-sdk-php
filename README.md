@@ -18,7 +18,7 @@ $client = new NacosClient('localhost', 8848);
 
 $dataId = 'database.php';
 $group = 'DEFAULT_GROUP';
-$value = $client->getConfig($dataId, $group);
+$result = $client->getConfig($dataId, $group);
 ```
 
 ## Use Namespace
@@ -26,12 +26,13 @@ $value = $client->getConfig($dataId, $group);
 ```php
 use Nacos\NacosClient;
 
-$client = new NacosClient('localhost', 8848);
-$client->setNamespace('c78ce19d-82d1-456a-8552-9a0db6c11d01');
-
 $dataId = 'database.php';
 $group = 'DEFAULT_GROUP';
-$value = $client->getConfig($dataId, $group);
+$namespace = 'c78ce19d-82d1-456a-8552-9a0db6c11d01';
+
+$client = new NacosClient('localhost', 8848);
+$client->setNamespace($namespace);
+$result = $client->getConfig($dataId, $group);
 ```
 ## Listener Config
 
@@ -57,9 +58,9 @@ $cache->contentMd5 = $contentMd5;
 $result = $client->listenConfig([$cache]);
 if(!empty($result)) {
     $updateContent = $client->getConfig($dataId, $group);
-    var_dump($updateContent);
+    echo '[x] update content : ' . $updateContent, "\n";
 } else {
-    var_dump('This Is Not Update');
+    echo '[x] this is not update ', "\n";
 }
 ```
 
