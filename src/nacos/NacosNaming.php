@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nacos;
 
 use Nacos\Exceptions\NacosNamingNoAliveInstance;

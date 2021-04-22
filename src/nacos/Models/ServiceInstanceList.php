@@ -1,7 +1,8 @@
 <?php
 
-namespace Nacos\Models;
+declare(strict_types=1);
 
+namespace Nacos\Models;
 class ServiceInstanceList
 {
     /**

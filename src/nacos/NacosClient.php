@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nacos;
 
 use GuzzleHttp\Client;
@@ -127,7 +129,8 @@ class NacosClient
 
         if (404 === $resp->getStatusCode()) {
             throw new NacosConfigNotFound(
-                "config not found, dataId:{$dataId} group:{$group} tenant:{$this->namespace}",404
+                "config not found, dataId:{$dataId} group:{$group} tenant:{$this->namespace}",
+                404
             );
         }
         return $resp->getBody()->__toString();
@@ -232,7 +235,7 @@ class NacosClient
         $changed = [];
         $lines = explode(self::LINE_SEPARATOR, urldecode($respString));
         foreach ($lines as $line) {
-            if(!empty($line)) {
+            if (!empty($line)) {
                 $parts = explode(self::WORD_SEPARATOR, $line);
                 $c = new Config();
                 if (count($parts) === 3) {
@@ -314,7 +317,8 @@ class NacosClient
             'http_errors' => false,
             'query' => $query,
         ]);
-        $data = json_decode($resp->getBody(), JSON_OBJECT_AS_ARRAY);
+
+        $data = json_decode((string)$resp->getBody(), true);
 
         if (404 === $resp->getStatusCode()) {
             throw new NacosNamingNotFound(
@@ -354,7 +358,7 @@ class NacosClient
         ));
 
         $resp = $this->request('GET', '/nacos/v1/ns/instance', ['query' => $query]);
-        $data = json_decode($resp->getBody(), JSON_OBJECT_AS_ARRAY);
+        $data = json_decode((string)$resp->getBody(), true);
         $data['serviceName'] = $data['service'];
 
         return new ServiceInstance($data);
@@ -374,7 +378,7 @@ class NacosClient
         ];
 
         $resp = $this->request('PUT', '/nacos/v1/ns/instance/beat', ['form_params' => $formParams]);
-        $array = json_decode($resp->getBody(), JSON_OBJECT_AS_ARRAY);
+        $array = json_decode((string) $resp->getBody(), true);
 
         $result = new BeatResult();
         $result->clientBeatInterval = $array['clientBeatInterval'];
