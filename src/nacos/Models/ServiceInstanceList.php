@@ -4,7 +4,6 @@ namespace Nacos\Models;
 
 class ServiceInstanceList
 {
-
     /**
      * @var string
      */

@@ -1,4 +1,4 @@
-<?php // zhangwei@dankegongyu.com 
+<?php 
 
 namespace Nacos\Utils;
 
@@ -7,7 +7,6 @@ class PropertiesConfigParser
     public static function parse(string $content)
     {
         $values = [];
-
         $lines = explode("\n", $content);
         foreach ($lines as $line) {
             $line = trim($line);
@@ -35,16 +34,18 @@ class PropertiesConfigParser
         return $values;
     }
 
-    protected static function translateValue($value)
+    /**
+     * translateValue 
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    protected static function translateValue(string $value)
     {
         $value = trim($value);
-
-        switch ($value) {
-            case 'true':
-                return true;
-
-            case 'false':
-                return false;
+        if (in_array($value,['true','false'])) {
+            return (bool) $value;
         }
 
         // 去除首尾引号
@@ -55,7 +56,6 @@ class PropertiesConfigParser
                 return substr($value, 1, -1);
             }
         }
-
         return $value;
     }
 }

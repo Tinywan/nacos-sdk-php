@@ -15,7 +15,6 @@ class RandomByWeightSelector
     public static function select(array $instances)
     {
         $length = count($instances);
-
         // 只有一项，不需要负载
         if (1 === $length) {
             return $instances[0];

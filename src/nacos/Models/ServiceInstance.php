@@ -10,7 +10,7 @@ class ServiceInstance
      * 服务名，不能为空
      * @var string
      */
-    public $serviceName;
+    public string $serviceName;
 
     /**
      * 服务实例 IP，不能为空
@@ -75,6 +75,11 @@ class ServiceInstance
      */
     public $instanceId;
 
+    /**
+     * __construct function
+     *
+     * @param array $info
+     */
     public function __construct(array $info = [])
     {
         if (isset($info['metadata']) && is_string($info['metadata'])) {
@@ -170,6 +175,11 @@ class ServiceInstance
         return $this->weight ? doubleval($this->weight) : 0;
     }
 
+    /**
+     * filter function
+     *
+     * @param array $array
+     */
     protected function filter(array $array)
     {
         return array_filter($array, function ($value) {
