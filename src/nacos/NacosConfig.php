@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Nacos;
 
-use Nacos\Exceptions\NacosException;
+use \UnexpectedValueException;
 use Nacos\Utils\PropertiesConfigParser;
 
 class NacosConfig
@@ -41,8 +41,7 @@ class NacosConfig
         if ($format === 'properties') {
             return PropertiesConfigParser::parse($content);
         }
-
-        throw new NacosException('Unsupported config format');
+        throw new UnexpectedValueException('Format not supported');
     }
 
     /**
