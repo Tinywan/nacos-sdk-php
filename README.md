@@ -76,7 +76,6 @@ if(!empty($result)) {
     echo '[x] this is not update ', "\n";
 }
 ```
-
 ## API
 ### Request Options
 
@@ -84,7 +83,6 @@ if(!empty($result)) {
   - string $namespace
 - setTimeout
   - int $timeout
-
 ### Config API
 
 - getConfig
@@ -100,7 +98,6 @@ if(!empty($result)) {
 - listenConfig
   - array $configs
   - int $timeout = 30
-
 ### Naming API
 
 - createInstance
