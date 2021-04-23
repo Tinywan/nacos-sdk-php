@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Nacos;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use Nacos\Exceptions\NacosConfigNotFound;
+use Nacos\Exceptions\NacosConnectionException;
 use Nacos\Exceptions\NacosNamingNotFound;
 use Nacos\Exceptions\NacosRequestException;
+use Nacos\Exceptions\NacosResponseException;
 use Nacos\Models\BeatInfo;
 use Nacos\Models\BeatResult;
 use Nacos\Models\Config;
@@ -96,8 +99,13 @@ class NacosClient
 
         try {
             $resp = $client->request($method, $uri, $options);
+        } catch (ConnectException $connectException) {
+            throw new NacosConnectionException("[Nacos Server] " . $connectException->getMessage());
         } catch (RequestException $exception) {
-            throw new NacosRequestException("{$method} {$uri} fail", $exception->getCode(), $exception);
+            throw new NacosRequestException($exception->getMessage());
+        }
+        if (404 === $resp->getStatusCode()) {
+            throw new NacosConfigNotFound($resp->getReasonPhrase());
         }
         return $resp;
     }
@@ -133,7 +141,7 @@ class NacosClient
                 404
             );
         }
-        return $resp->getBody()->__toString();
+        return $resp->getBody()->getContents();
     }
 
     /**
@@ -158,11 +166,11 @@ class NacosClient
         }
 
         $resp = $this->request('POST', '/nacos/v1/cs/configs', ['form_params' => $formParams]);
-        return $this->assertResponse($resp, 'true', "NacosClient update config fail");
+        return $this->assertResponse($resp, 'true', "Nacos Client update config fail");
     }
 
     /**
-     * @desc: assertResponse function
+     * @desc: assertResponse
      * @param \Psr\Http\Message\ResponseInterface $resp
      * @param $expected
      * @param $message
@@ -171,9 +179,9 @@ class NacosClient
      */
     protected function assertResponse(\Psr\Http\Message\ResponseInterface $resp, $expected, $message)
     {
-        $actual = $resp->getBody()->__toString();
+        $actual = $resp->getBody()->getContents();
         if ($expected !== $actual) {
-            throw new NacosRequestException("$message, actual: {$actual}");
+            throw new NacosResponseException("$message, actual: {$actual}");
         }
         return true;
     }
@@ -198,7 +206,7 @@ class NacosClient
         }
 
         $resp = $this->request('DELETE', '/nacos/v1/cs/configs', ['query' => $query]);
-        return $this->assertResponse($resp, 'true', "NacosClient delete config fail");
+        return $this->assertResponse($resp, 'true', "Nacos Client delete config fail");
     }
 
     /**
@@ -227,7 +235,7 @@ class NacosClient
             ],
         ]);
 
-        $respString = $resp->getBody()->__toString();
+        $respString = $resp->getBody()->getContents();
         if (!$respString) {
             return [];
         }
@@ -260,7 +268,7 @@ class NacosClient
     {
         $instance->validate();
         $resp = $this->request('POST', '/nacos/v1/ns/instance', ['form_params' => $instance->toCreateParams()]);
-        return $this->assertResponse($resp, 'ok', "NacosClient create service instance fail");
+        return $this->assertResponse($resp, 'ok', "Nacos Client create service instance fail");
     }
 
     /**
@@ -281,14 +289,14 @@ class NacosClient
     ) {
         $query = array_filter(compact('serviceName', 'ip', 'port', 'clusterName', 'namespaceId'));
         $resp = $this->request('DELETE', '/nacos/v1/ns/instance', ['query' => $query]);
-        return $this->assertResponse($resp, 'ok', "NacosClient delete service instance fail");
+        return $this->assertResponse($resp, 'ok', "Nacos Client delete service instance fail");
     }
 
     public function updateInstance(ServiceInstance $instance)
     {
         $instance->validate();
         $resp = $this->request('PUT', '/nacos/v1/ns/instance', ['form_params' => $instance->toUpdateParams()]);
-        return $this->assertResponse($resp, 'ok', "NacosClient update service instance fail");
+        return $this->assertResponse($resp, 'ok', "Nacos Client update service instance fail");
     }
 
     /**
