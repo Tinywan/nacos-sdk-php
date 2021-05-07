@@ -20,9 +20,6 @@ before_script:
 script:
  - vendor/bin/phpunit --version
  - mkdir -p build/logs
- - vendor/bin/phpunit --bootstrap src/Nacos/NacosClient.php tests/NacosClientTest.php
- - vendor/bin/phpunit --bootstrap src/Nacos/NacosConfig.php tests/NacosConfigTest.php
- - vendor/bin/phpunit --bootstrap src/Nacos/NacosNaming.php tests/NacosNamingTest.php
 
 after_script:
  - travis_retry vendor/bin/php-coveralls -v
