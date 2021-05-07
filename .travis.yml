@@ -1,0 +1,28 @@
+language: php
+
+sudo: false
+
+php: 
+  - 7.1
+  - 7.2
+  - 7.3
+  - 7.4
+    
+before_install:  
+  - travis_retry composer self-update
+
+install:
+  - travis_retry composer install --prefer-dist --dev --no-suggest --no-interaction
+
+before_script:
+  - export XDEBUG_MODE=coverage
+
+script:
+ - vendor/bin/phpunit --version
+ - mkdir -p build/logs
+ - vendor/bin/phpunit --bootstrap src/Nacos/NacosClient.php tests/NacosClientTest.php
+ - vendor/bin/phpunit --bootstrap src/Nacos/NacosConfig.php tests/NacosConfigTest.php
+ - vendor/bin/phpunit --bootstrap src/Nacos/NacosNaming.php tests/NacosNamingTest.php
+
+after_script:
+ - travis_retry vendor/bin/php-coveralls -v
