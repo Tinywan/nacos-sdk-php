@@ -21,7 +21,8 @@
     },
     "require-dev": {
         "ext-pcntl": "*",
-        "phpunit/phpunit": "^6.5"
+        "phpunit/phpunit": "^6.5",
+        "php-coveralls/php-coveralls": "^2.4"
     },
     "autoload-dev": {
         "psr-4": {

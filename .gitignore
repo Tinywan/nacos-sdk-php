@@ -1,3 +1,6 @@
-/vendor
-/composer.lock
-/.idea
+build
+vendor
+.idea
+.vscode
+.phpunit*
+composer.lock
