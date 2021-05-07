@@ -10,7 +10,6 @@ php:
     
 before_install:  
   - travis_retry composer self-update
-  - mysql -e 'create database if not exists tauthz;'
 
 install:
   - travis_retry composer install --prefer-dist --dev --no-suggest --no-interaction
