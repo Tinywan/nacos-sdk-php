@@ -85,7 +85,7 @@ class ServiceInstance
     public function __construct(array $info = [])
     {
         if (isset($info['metadata']) && is_string($info['metadata'])) {
-            $metadata = json_decode($info['metadata'], JSON_OBJECT_AS_ARRAY);
+            $metadata = json_decode($info['metadata'], true);
             if ($metadata) {
                 $this->metadata = $metadata;
             }

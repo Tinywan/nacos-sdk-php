@@ -76,6 +76,31 @@ if(!empty($result)) {
     echo '[x] this is not update ', "\n";
 }
 ```
+
+## Register an instance to the service
+
+```php
+use Nacos\NacosClient;
+use Nacos\Models\Config;
+
+$client = new NacosClient('localhost', 8848);
+
+$serviceName  = 'NacosTaskService';
+$instance = new ServiceInstance();
+$instance->serviceName = $serviceName;
+$instance->ip = '127.0.0.1';
+$instance->port = 80;
+$instance->healthy = true;
+$instance->ephemeral = false;
+
+$isSuccess = $client->createInstance($instance);
+if(true === $isSuccess) {
+    echo '[x] create service instance success ', "\n";
+} else {
+    echo '[x] create service instance fail ', "\n";
+}
+```
+
 ## API
 ### Request Options
 
