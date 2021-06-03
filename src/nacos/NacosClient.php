@@ -292,6 +292,12 @@ class NacosClient
         return $this->assertResponse($resp, 'ok', "Nacos Client delete service instance fail");
     }
 
+    /**
+     * @desc: 更新服务下的一个实例
+     * @param ServiceInstance $instance
+     * @return bool
+     * @author Tinywan(ShaoBo Wan)
+     */
     public function updateInstance(ServiceInstance $instance)
     {
         $instance->validate();
@@ -300,12 +306,11 @@ class NacosClient
     }
 
     /**
-     * 查询服务下的实例列表
-     *
-     * @param string $serviceName      服务名
+     * @desc: 方法描述
+     * @param string $serviceName 服务名
      * @param string|null $namespaceId 命名空间ID
-     * @param string[] $clusters       集群名称
-     * @param bool $healthyOnly        是否只返回健康实例
+     * @param array $clusters 集群名称
+     * @param bool $healthyOnly 是否只返回健康实例
      * @return ServiceInstanceList
      */
     public function getInstanceList(
