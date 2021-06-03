@@ -100,6 +100,7 @@ if(true === $isSuccess) {
     echo '[x] create service instance fail ', "\n";
 }
 ```
+![nacaos-regiter-service.png](./img/nacaos-regiter-service.png)
 
 ## API
 ### Request Options
@@ -175,4 +176,11 @@ NacosNaming
 Docker Composer
 ```
 docker run --rm --interactive --tty -v e:/GitHub/nacos-sdk-php:/app composer:1.10.16 install --ignore-platform-reqs
+```
+
+Git Tag
+```
+git push origin v0.0.42
+// or push all
+git push origin --tags
 ```
