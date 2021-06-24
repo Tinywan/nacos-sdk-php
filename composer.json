@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Nacos\\": "src/Nacos"
+            "Nacos\\": "src"
         }
     },
     "require-dev": {
