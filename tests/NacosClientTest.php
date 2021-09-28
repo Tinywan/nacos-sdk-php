@@ -1,4 +1,4 @@
-<?php // zhangwei@dankegongyu.com 
+<?php
 
 namespace Nacos\Tests;
 
@@ -8,6 +8,7 @@ use Nacos\Models\BeatResult;
 use Nacos\Models\Config;
 use Nacos\Models\ServiceInstance;
 use Nacos\Models\ServiceInstanceList;
+use Nacos\NacosAuth;
 use Nacos\NacosClient;
 use PHPUnit\Framework\AssertionFailedError;
 
@@ -19,7 +20,7 @@ class NacosClientTest extends TestCase
         $group = 'DEFAULT_GROUP';
         $value = 'test value 2';
 
-        $client = new NacosClient('dnmp-nacos', 8848);
+        $client = new NacosClient('192.168.13.189', 8848);
 
         $publishResult = $client->publishConfig($dataId, $group, $value);
         self::assertTrue($publishResult);
@@ -35,7 +36,7 @@ class NacosClientTest extends TestCase
 
     public function testConfigNotFoundException()
     {
-        $client = new NacosClient('dnmp-nacos', 8848);
+        $client = new NacosClient('192.168.13.189', 8848);
         $dataId = 'not-exists-data-id.' . microtime(true);
 
         try {
@@ -53,7 +54,7 @@ class NacosClientTest extends TestCase
          $dataId = 'nginx.conf';
          $group = 'DEFAULT_GROUP';
 
-         $client = new NacosClient('dnmp-nacos', 8848);
+         $client = new NacosClient('192.168.13.189', 8848);
          $client->setTimeout(1);
          $content = $client->getConfig($dataId, $group);
          $contentMd5 = md5($content);
@@ -78,18 +79,26 @@ class NacosClientTest extends TestCase
 
      public function testServiceInstance()
      {
-         $client = new NacosClient('dnmp-nacos', 8848);
+         $serviceName  = 'NacosService';
+         $client = new NacosClient('192.168.13.189', 8848);
 
+         // [2] 需要注册的服务实例
          $instance = new ServiceInstance();
-         $instance->ip = '127.0.0.1';
-         $instance->port = 7777;
-         $instance->serviceName = 'hello.world';
-         $instance->metadata = ['hello' => 'world'];
+         $instance->serviceName = $serviceName;
+         $instance->enable = true;
+         $instance->ip = '192.168.13.189';
+         $instance->port = 8787;
+         $instance->weight = 10;
+         $instance->healthy = true;
+         $instance->ephemeral = false;
+         $instance->metadata = [
+             'hello' => 'world'
+         ];
 
          $success = $client->createInstance($instance);
          self::assertTrue($success);
 
-         $list = $client->getInstanceList('hello.world');
+         $list = $client->getInstanceList($serviceName);
          self::assertInstanceOf(ServiceInstanceList::class, $list);
          self::assertInstanceOf(ServiceInstance::class, $list->hosts[0]);
          self::assertSame(['hello' => 'world'], $list->hosts[0]->metadata);
@@ -105,9 +114,24 @@ class NacosClientTest extends TestCase
          self::assertInstanceOf(ServiceInstance::class, $result);
 
          $beat = new BeatInfo();
-         $beat->ip = '127.0.0.1';
-         $beat->port = 1234;
+         $beat->ip = '192.168.13.189';
+         $beat->port = 8787;
          $beatResp = $client->sendInstanceBeat('hello.world', $beat);
          self::assertInstanceOf(BeatResult::class, $beatResp);
      }
+
+    public function testLogin()
+    {
+        $client = new NacosClient('192.168.13.189', 8848);
+        $auth = new NacosAuth($client);
+        $auth->login('nacos','nacos');
+
+        $dataId = 'database.php';
+        $group = 'DEFAULT_GROUP';
+        $value = '2021';
+
+        $client = new NacosClient('192.168.13.189', 8848);
+        $newValue = $client->getConfig($dataId, $group);
+        self::assertSame($value, $newValue);
+    }
 }

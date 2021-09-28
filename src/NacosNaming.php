@@ -14,12 +14,21 @@ class NacosNaming
      */
     protected $client;
 
+    /**
+     * NacosNaming constructor.
+     * @param NacosClient $client
+     */
     public function __construct(NacosClient $client)
     {
         $this->client = $client;
     }
 
-    public function selectOneHealthyInstance($serviceName)
+    /**
+     * @param string $serviceName
+     * @return Models\ServiceInstance
+     * @throws \Exception
+     */
+    public function selectOneHealthyInstance(string $serviceName)
     {
         $list = $this->client->getInstanceList($serviceName);
 
@@ -27,7 +36,7 @@ class NacosNaming
             throw new NacosNamingNoAliveInstance("$serviceName no alive instnace");
         }
 
-        return RandomByWeightSelector::select($list->hosts);
+        return RandomByWeightSelector::select((array) $list->hosts);
     }
 
     /**

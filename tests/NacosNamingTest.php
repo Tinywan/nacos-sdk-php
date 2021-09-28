@@ -14,7 +14,7 @@ class NacosNamingTest extends TestCase
 {
     public function testSelectOneHealthyInstance()
     {
-        $client = new NacosClient('dnmp-nacos', 8848);
+        $client = new NacosClient('192.168.13.189', 8848);
 
         $instance = new ServiceInstance();
         $instance->serviceName = 'hello.world';

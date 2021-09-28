@@ -110,6 +110,32 @@ class NacosClient
         return $resp;
     }
 
+    /**
+     * @desc: login
+     * @param string $username
+     * @param string $password
+     * @return string
+     */
+    public function login(string $username, string $password)
+    {
+        $query = [
+            'username' => $username,
+            'password' => $password
+        ];
+
+        $resp = $this->request('POST', '/nacos/v1/auth/users/login', [
+            'http_errors' => false,
+            'query' => $query
+        ]);
+
+        if (404 === $resp->getStatusCode()) {
+            throw new NacosConfigNotFound(
+                "config not found, username:{$username} password:{$password}",
+                404
+            );
+        }
+        return $resp->getBody()->getContents();
+    }
 
     /**
      * Get Config Option

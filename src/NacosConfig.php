@@ -14,6 +14,10 @@ class NacosConfig
      */
     protected $client;
 
+    /**
+     * NacosConfig constructor.
+     * @param NacosClient $client
+     */
     public function __construct(NacosClient $client)
     {
         $this->client = $client;

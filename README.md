@@ -34,6 +34,21 @@ $group = 'DEFAULT_GROUP';
 $result = $client->getConfig($dataId, $group);
 ```
 
+if `nacos.core.auth.enabled=false`
+
+```php
+use Nacos\NacosClient;
+use Nacos\NacosAuth;
+
+$client = new NacosClient('localhost', 8848);
+
+$auth = new NacosAuth($client);
+$auth->login('nacos','nacos');
+$dataId = 'database.php';
+$group = 'DEFAULT_GROUP';
+$result = $client->getConfig($dataId, $group);
+```
+
 ## Use Namespace
 
 ```php

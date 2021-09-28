@@ -12,7 +12,7 @@ class ServiceInstance
      * 服务名，不能为空
      * @var string
      */
-    public string $serviceName;
+    public $serviceName;
 
     /**
      * 服务实例 IP，不能为空
