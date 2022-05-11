@@ -413,6 +413,7 @@ class NacosClient
     {
         $formParams = [
             'serviceName' => $serviceName,
+            'namespaceId' => $this->namespace,
             'beat' => json_encode($beat)
         ];
 
