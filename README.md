@@ -3,12 +3,10 @@
 [![license](https://img.shields.io/github/license/Tinywan/nacos-sdk-php)]()
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 [![Build status](https://github.com/Tinywan/dnmp/workflows/CI/badge.svg)]()
-[![nacos-sdk-php](https://img.shields.io/github/v/release/tinywan/nacos-sdk-php?include_prereleases)]()
-[![nacos-sdk-php](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
-[![nacos-sdk-php](https://img.shields.io/packagist/php-v/tinywan/nacos-sdk-php)]()
-[![nacos-sdk-php](https://img.shields.io/github/last-commit/tinywan/nacos-sdk-php/main)]()
-[![nacos-sdk-php](https://img.shields.io/github/v/tag/tinywan/nacos-sdk-php?color=ff69b4)]()
-
+[![Latest Stable Version](http://poser.pugx.org/tinywan/nacos-sdk-php/v)](https://packagist.org/packages/tinywan/nacos-sdk-php) 
+[![Total Downloads](http://poser.pugx.org/tinywan/nacos-sdk-php/downloads)](https://packagist.org/packages/tinywan/nacos-sdk-php) 
+[![License](http://poser.pugx.org/tinywan/nacos-sdk-php/license)](https://packagist.org/packages/tinywan/nacos-sdk-php) 
+[![PHP Version Require](http://poser.pugx.org/tinywan/nacos-sdk-php/require/php)](https://packagist.org/packages/tinywan/nacos-sdk-php)
 
 ## Nacos-Sdk-PHP
 
